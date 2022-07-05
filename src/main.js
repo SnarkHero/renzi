@@ -11,6 +11,8 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
+// import * as全部导出
+import * as directives from '@/directives/index'
 
 import '@/icons' // icon
 import '@/permission' // permission control
@@ -28,6 +30,11 @@ import '@/permission' // permission control
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
+
+// 全局注册自定义事件,遍历directives对象,Object.keys(遍历directives对象),得出来的值是[所有键名数组],再遍历数组,在遍历中完成注册自定义事件
+Object.keys(directives).forEach(item => {
+  Vue.directive(item, directives[item])
+})
 
 Vue.config.productionTip = false
 

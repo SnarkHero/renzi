@@ -8,7 +8,7 @@
  * @param {string} cFormat
  * @returns {string | null}
  */
-export function parseTime(time, cFormat) {
+export function parseTime (time, cFormat) {
   if (arguments.length === 0 || !time) {
     return null
   }
@@ -45,7 +45,7 @@ export function parseTime(time, cFormat) {
   const time_str = format.replace(/{([ymdhisa])+}/g, (result, key) => {
     const value = formatObj[key]
     // Note: getDay() returns 0 on Sunday
-    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value ] }
+    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value] }
     return value.toString().padStart(2, '0')
   })
   return time_str
@@ -56,7 +56,7 @@ export function parseTime(time, cFormat) {
  * @param {string} option
  * @returns {string}
  */
-export function formatTime(time, option) {
+export function formatTime (time, option) {
   if (('' + time).length === 10) {
     time = parseInt(time) * 1000
   } else {
@@ -98,7 +98,7 @@ export function formatTime(time, option) {
  * @param {string} url
  * @returns {Object}
  */
-export function param2Obj(url) {
+export function param2Obj (url) {
   const search = decodeURIComponent(url.split('?')[1]).replace(/\+/g, ' ')
   if (!search) {
     return {}
@@ -114,4 +114,19 @@ export function param2Obj(url) {
     }
   })
   return obj
+}
+
+// 递归算法,处理树形数据,自身调用自身 => 一定条件不能一样， 否则就会死循环
+export function tranListToTreeData (list, rootValue) {
+  var arr = []
+  list.forEach(item => {
+    if (item.pid === rootValue) {
+      const children = tranListToTreeData(list, item.id)
+      if (children.length) {
+        item.children = children
+      }
+      arr.push(item)
+    }
+  })
+  return arr
 }

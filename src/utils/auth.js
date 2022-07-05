@@ -13,4 +13,12 @@ export function setToken (token) {
 export function removeToken () {
   return Cookies.remove(TokenKey)
 }
-
+// 设置时间戳
+const timeKey = 'hrsaas-timestamp-key'
+export function setTimeStamp () {
+  return Cookies.set(timeKey, new Date().getTime())
+}
+// 获取时间戳
+export function getTimeStamp () {
+  return Cookies.get(timeKey)
+}

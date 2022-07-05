@@ -8,10 +8,17 @@ export function login (data) {
   })
 }
 
-export function getInfo (token) {
-
+// 登录--获取用户基本资料
+export function getUserInfo () {
+  return request({
+    url: '/sys/profile',
+    method: 'post'
+  })
 }
 
-export function logout () {
-
+// 用户--获取用户信息
+export function getUserDetailById (id) {
+  return request({
+    url: `/sys/user/${id}`
+  })
 }

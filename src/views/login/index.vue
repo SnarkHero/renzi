@@ -139,6 +139,7 @@ export default {
             // loading打开旋转按钮
             // 为什么用tyr chtch :因为异步的请求失败信息需要用tyr chtch接收 tyr表示成功,catch表示失败的信息，信息已经在响应拦截器处理过
             this.loading = true
+            console.log(this.loginForm)
             await this['user/login'](this.loginForm)
             this.$router.push('/')
           } catch (error) {
