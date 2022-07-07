@@ -76,6 +76,15 @@ export const constantRoutes = [
       meta: { title: '首页', icon: 'dashboard' }
     }]
   },
+  {
+    path: '/import',
+    component: Layout,
+    hidden: true, // 不在左侧菜单显示
+    children: [{
+      path: '', // 默认二级路由
+      component: () => import('@/views/import/index')
+    }]
+  },
 
   // 404 page must be placed at the end !!!
   // *代表找不到的时候跳转到/404界面
