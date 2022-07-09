@@ -9,7 +9,11 @@
             type="warning"
             @click="$router.push('/import')"
           >导入</el-button>
-          <el-button size="small" type="danger">导出</el-button>
+          <el-button
+            size="small"
+            type="danger"
+            @click="exportData"
+          >导出</el-button>
           <el-button
             size="small"
             type="primary"
@@ -43,7 +47,11 @@
           </el-table-column>
           <el-table-column label="操作" sortable="" fixed="right" width="280">
             <template v-slot="{ row }">
-              <el-button type="text" size="small">查看</el-button>
+              <el-button
+                type="text"
+                size="small"
+                @click="$router.push(`/employees/detail/${row.id}`)"
+              >查看</el-button>
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
@@ -81,6 +89,7 @@
 import AddDemployee from './components/add-employee.vue'
 import { getEmployeeList, delEmployee } from '@/api/employees'
 import EmployeeEnum from '@/api/constant/employees'// 引入枚举形式
+import { formatDate } from '@/filters/index.js'
 export default {
   components: {
     AddDemployee
@@ -126,6 +135,50 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    exportData () {
+      // 表头对应关系
+      const headers = {
+        '姓名': 'username',
+        '手机号': 'mobile',
+        '入职日期': 'timeOfEntry',
+        '聘用形式': 'formOfEmployment',
+        '转正日期': 'correctionTime',
+        '工号': 'workNumber',
+        '部门': 'departmentName'
+      }
+      // 懒加载
+      import('@/vendor/Export2Excel').then(async excel => {
+        // 让所有的数据在一页上展示出来
+        const { rows } = await getEmployeeList({ page: 1, size: this.page.total })
+        const data = this.formatJson(headers, rows)
+        // rows格式为[{name:'11'},{name:'12'}]
+        excel.export_json_to_excel({
+          header: Object.keys(headers),
+          data,
+          filename: '员工信息表',
+          autoWidth: true,
+          bookType: 'xlsx'
+        })
+      })
+    },
+    formatJson (headers, rows) {
+      // rows格式为[{name:'11',moblie:123456},{name:'12'，moblie:1234567}]
+      return rows.map(item => {
+        // item是一个对象 {{name:'11',moblie:123456}}
+        return Object.keys(headers).map(key => {
+          if (headers[key] === 'timeOfEntry' || headers[key] === 'correctionTime') {
+            return formatDate(item[headers[key]]) // 返回格式化之前的时间
+          } else if (headers[key] === 'formOfEmployment') {
+            const obj = EmployeeEnum.hireType.find(obj => obj.id === item[headers[key]])
+            return obj ? obj.value : '未知'
+          }
+          // headers数据{'姓名': 'name','手机号': 'name'}
+          // headers遍历返回的是['姓名','手机号'],再用map得到headers[key]是item的键名
+          return item[headers[key]]
+          // ['11','123456']
+        })
+      })
     }
   }
 }
