@@ -26,6 +26,22 @@
         <el-table border :data="list">
           <el-table-column label="序号" sortable="" type="index" />
           <el-table-column label="姓名" sortable="" prop="username" />
+          <el-table-column label="图片" align="center">
+            <template v-slot="{ row }">
+              <img
+                v-imagerror="require('@/assets/common/bigUserHeader.png')"
+                :src="row.staffPhoto"
+                alt=""
+                style="
+                  border-radius: 50%;
+                  width: 100px;
+                  height: 100px;
+                  padding: 10px;
+                "
+                @click="showQrCode(row.staffPhoto)"
+              >
+            </template>
+          </el-table-column>
           <el-table-column label="工号" sortable="" prop="workNumber" />
           <el-table-column
             label="聘用形式"
@@ -55,7 +71,11 @@
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
-              <el-button type="text" size="small">角色</el-button>
+              <el-button
+                type="text"
+                size="small"
+                @click="editRole(row.id)"
+              >角色</el-button>
               <el-button
                 type="text"
                 size="small"
@@ -82,6 +102,21 @@
       </el-card>
       <AddDemployee :show-dialog.sync="showDialog" />
     </div>
+    <el-dialog
+      title="二维码"
+      :visible.sync="showCodeDialog"
+      @opened="showQrCode"
+      @close="imgUrl = ''"
+    >
+      <el-row type="flex" justify="center">
+        <canvas ref="myCanvas" />
+      </el-row>
+    </el-dialog>
+    <assignRole
+      ref="assignRole"
+      :show-role-dialog.sync="showRoleDialog"
+      :user-id="userId"
+    />
   </div>
 </template>
 
@@ -90,9 +125,12 @@ import AddDemployee from './components/add-employee.vue'
 import { getEmployeeList, delEmployee } from '@/api/employees'
 import EmployeeEnum from '@/api/constant/employees'// 引入枚举形式
 import { formatDate } from '@/filters/index.js'
+import QrCode from 'qrcode'
+import assignRole from '@/views/employees/components/assign-role.vue'
 export default {
   components: {
-    AddDemployee
+    AddDemployee,
+    assignRole
   },
   data () {
     return {
@@ -103,7 +141,10 @@ export default {
         total: 0
       },
       loading: false,
-      showDialog: false
+      showDialog: false,
+      showCodeDialog: false,
+      showRoleDialog: false,
+      userId: ''
     }
   },
   created () {
@@ -179,6 +220,21 @@ export default {
           // ['11','123456']
         })
       })
+    },
+    showQrCode (url) {
+      if (url) {
+        this.showCodeDialog = true
+        // 因为渲染页面是异步的,所以直接打开弹层后不能显示二维码,需要用$nextTick使数据更新后让页面渲染完毕
+        this.$nextTick(() => {
+          QrCode.toCanvas(this.$refs.myCanvas, url)
+        })
+      }
+    },
+    async editRole (id) {
+      this.userId = id
+      await this.$refs.assignRole.getUserDetailById(id)
+      // 为了防止弹窗后先没有效果再渲染,等页面数据传输更新过后再打开弹窗
+      this.showRoleDialog = true
     }
   }
 }

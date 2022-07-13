@@ -22,6 +22,14 @@ export default {
       meta: {
         title: '员工详情'
       }
+    },
+    {
+      path: 'print/:id', // 定义为空,因为表示默认路由为该路由,当跳转到/employees也会出现二级路由
+      component: () => import('@/views/employees/print'),
+      hidden: true,
+      meta: {
+        title: '打印'
+      }
     }
   ]
 }
