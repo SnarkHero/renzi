@@ -1,18 +1,37 @@
+
 import Layout from '@/layout'
-// 导出考勤的路由规则
-export default {
-  name: 'attendances',
+
+const attendRouter = {
   path: '/attendances',
   component: Layout,
+  name: 'attendances',
   children: [
     {
-      path: '', // 定义为空,因为表示默认路由为该路由,当跳转到/employees也会出现二级路由
+      path: '',
       component: () => import('@/views/attendances'),
-      // meta属性随意定义,此处是因为左侧导航会肚子meta里面的title遍历拿到
+      name: 'attendances',
       meta: {
         title: '考勤',
-        icon: 'skill'
+        icon: 'excel' }
+    },
+    {
+      path: 'archiving',
+      component: () => import('@/views/attendances/historical'),
+      name: 'archiving',
+      hidden: true,
+      meta: {
+        title: '归档'
+      }
+    },
+    {
+      path: 'report/:month',
+      component: () => import('@/views/attendances/report'),
+      name: 'reports',
+      hidden: true,
+      meta: {
+        title: '报表'
       }
     }
   ]
 }
+export default attendRouter

@@ -1,19 +1,56 @@
+
 import Layout from '@/layout'
-// 导出工资的路由规则
-export default {
-  name: 'salarys',
+
+const salaryRouter = {
   path: '/salarys',
   component: Layout,
+  name: 'salarys',
   children: [
     {
-      path: '', // 定义为空,因为表示默认路由为该路由,当跳转到/employees也会出现二级路由
+      path: '',
       component: () => import('@/views/salarys'),
-      // meta属性随意定义,此处是因为左侧导航会肚子meta里面的title遍历拿到
+      name: 'salarys',
       meta: {
         title: '工资',
         icon: 'money'
-
+      }
+    },
+    {
+      path: 'setting',
+      component: () => import('@/views/salarys/setting'),
+      name: 'salarysSetting',
+      hidden: true,
+      meta: {
+        title: '设置'
+      }
+    },
+    {
+      path: 'details/:yearMonth/:id',
+      component: () => import('@/views/salarys/detail'),
+      name: 'salarysDetails',
+      hidden: true,
+      meta: {
+        title: '详情'
+      }
+    },
+    {
+      path: 'historicalArchiving',
+      component: () => import('@/views/salarys/historical'),
+      name: 'salarysHistorical',
+      hidden: true,
+      meta: {
+        title: '历史归档'
+      }
+    },
+    {
+      path: 'monthStatement',
+      component: () => import('@/views/salarys/month'),
+      name: 'salarysMonthStatement',
+      hidden: true,
+      meta: {
+        title: '月报表'
       }
     }
   ]
 }
+export default salaryRouter

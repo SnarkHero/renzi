@@ -1,5 +1,6 @@
 import { getToken, setToken, removeToken, setTimeStamp } from '@/utils/auth'
 import { login, getUserInfo, getUserDetailById } from '@/api/user'
+import { resetRouter } from '@/router/index'
 // 状态
 const state = {
   token: getToken(),
@@ -52,6 +53,10 @@ const actions = {
     contest.commit('removeToken')
     // 清除用户信息
     contest.commit('reomveUserInfo')
+    // 重置路由
+    resetRouter()
+    // 要清除vuex中的permission模块下的state数据,子模块调用子模块的action 可以 将 commit的第三个参数 设置成  { root: true } 就表示当前的context不是子模块了 而是父模块
+    contest.commit('permission/setRoutes', [], { root: true })
   }
 }
 export default {

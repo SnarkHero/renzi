@@ -4,8 +4,8 @@ import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale/lang/en' // lang i18n
-
+// import locale from 'element-ui/lib/locale/lang/en' // lang i18n
+import i18n from '@/lang/index'
 import '@/styles/index.scss' // global css
 
 import App from './App'
@@ -16,7 +16,7 @@ import * as directives from '@/directives/index'
 import * as filters from '@/filters' // 引入工具类
 import '@/icons' // icon
 import '@/permission' // permission control
-
+import checkPermission from '@/mixin/checkPermission'
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -25,11 +25,13 @@ import '@/permission' // permission control
  * Currently MockJs will be used in the production environment,
  * please remove it before going online ! ! !
  */
-
+Vue.mixin(checkPermission)
 // set ElementUI lang to EN
-Vue.use(ElementUI, { locale })
+// Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
-// Vue.use(ElementUI)
+Vue.use(ElementUI, {
+  i18n: (key, value) => i18n.t(key, value)
+})
 Vue.use(Component)
 // 全局注册自定义事件,遍历directives对象,Object.keys(遍历directives对象),得出来的值是[所有键名数组],再遍历数组,在遍历中完成注册自定义事件
 Object.keys(directives).forEach(item => {
@@ -46,5 +48,6 @@ new Vue({
   el: '#app',
   router,
   store,
+  i18n,
   render: h => h(App)
 })

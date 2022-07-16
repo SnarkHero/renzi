@@ -1,18 +1,49 @@
+
 import Layout from '@/layout'
-// 导出社保的路由规则
+
 export default {
-  name: 'social',
-  path: '/social',
+  path: '/social_securitys',
   component: Layout,
+  name: 'social_securitys',
   children: [
     {
-      path: '', // 定义为空,因为表示默认路由为该路由,当跳转到/employees也会出现二级路由
+      path: '',
       component: () => import('@/views/social'),
-      // meta属性随意定义,此处是因为左侧导航会肚子meta里面的title遍历拿到
+      name: 'social_securitys',
       meta: {
         title: '社保',
         icon: 'table'
 
+      }
+    },
+    // 报表
+    {
+      path: 'detail/:id',
+      hidden: true,
+      component: () => import('@/views/social/detail'),
+      name: 'socialDetail',
+      meta: {
+        title: '社保'
+      }
+    },
+    // 历史归档
+    {
+      path: 'historicalArchiving',
+      hidden: true,
+      component: () => import('@/views/social/historical'),
+      name: 'socialHistorical',
+      meta: {
+        title: '历史归档'
+      }
+    },
+    // 月报表
+    {
+      path: 'monthStatement',
+      component: () => import('@/views/social/month'),
+      name: 'socialMonthStatement',
+      hidden: true,
+      meta: {
+        title: '当月报表'
       }
     }
   ]

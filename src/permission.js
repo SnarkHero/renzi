@@ -18,7 +18,21 @@ router.beforeEach(async (to, from, next) => {
     } else {
       if (!store.getters.userId) {
         // 必须先把异步的获取用户资料变成同步的,否则就会先放行,应该获取资料后放行
-        await store.dispatch('user/getUserInfo')
+        const { roles } = await store.dispatch('user/getUserInfo')
+        // 如果说后续 需要根据用户资料获取数据的话 这里必须改成同步
+        // 筛选用户的可用路由
+        // actions中函数 默认是Promise对象 调用这个对象 想要获取返回的值的话必须加await或者是then
+        // actions是做异步的
+        const routes = await store.dispatch('permission/filterRoutes', roles.menus)
+        console.log(routes)
+        // routes是删选的动态路由
+        // 动态路由添加到路由表中 默认的路由表 只有静态路由 没有动态路由
+        // addRoutes
+        // 404必须放在最后
+        router.addRoutes([...routes, { path: '*', redirect: '/404', hidden: true }])// 添加动态路由到路由表 铺路
+        // 添加完动态路由之后
+        next(to.path)// 调到对应的地址 相当于多做一次跳转
+        // 跳转之前有缓存需要两次跳转,第一次缓存好数据,第二次就可以访问
       }
       // 直接放行
       next()
